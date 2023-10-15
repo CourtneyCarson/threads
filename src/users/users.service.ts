@@ -20,10 +20,12 @@ export class UsersService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} user`;
+    return this.userModel.findById(id).exec();
+    // return `This action returns a #${id} user`;
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
+    this.userModel.updateOne({ _id: id }, updateUserDto).exec();
     return `This action updates a #${id} user`;
   }
 
