@@ -34,6 +34,7 @@ export class CommentsService {
         parent: null,
       })
       .populate(['user', 'parent'])
+      .sort({ createdAt: -1 })
       .exec(); // returns an array
   }
 
@@ -44,6 +45,7 @@ export class CommentsService {
         parent: parentId,
       })
       .populate(['user', 'parent'])
+      .sort({ createdAt: -1 })
       .exec();
   }
 
