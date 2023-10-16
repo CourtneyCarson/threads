@@ -9,6 +9,7 @@ import { Model } from 'mongoose';
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
+  // create a new user, aka sign up
   create(createUserDto: CreateUserDto) {
     const userToSave = new this.userModel(createUserDto);
     return userToSave.save();
