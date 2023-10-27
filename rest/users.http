@@ -2,14 +2,32 @@ GET http://localhost:3000/users HTTP/1.1
 
 ###
 
-POST http://localhost:3000/users HTTP/1.1
-content-type: application/json
+# POST http://localhost:3000/users HTTP/1.1
+# content-type: application/json
 
-{
-    "name": "Ben Carson",
-    "time": "Wed, 21 Oct 2015 18:27:50 GMT"
-}
+# {
+#     "name": "Ben Carson",
+#     "time": "Wed, 21 Oct 2015 18:27:50 GMT"
+# }
 
 # {
 #     "name": 6,
 # }
+
+POST http://localhost:3000/users/register HTTP/1.1
+content-type: application/json
+
+{
+    "username": "demo@demo.com",
+    "password": "Password"
+}
+
+###
+
+POST http://localhost:3000/users/login HTTP/1.1
+content-type: application/json
+
+{
+    "username": "demo@demo.com",
+    "password": "Password"
+}
