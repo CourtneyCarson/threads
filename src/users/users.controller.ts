@@ -5,9 +5,19 @@ import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
+  /**
+   * Constructs a new instance of the class, initializing the `usersService` property.
+   * @param usersService - An instance of UsersService to be used for user-related operations.
+   */
   constructor(private readonly usersService: UsersService) {}
 
   @Post('register')
+  /**
+   * Registers a new user with the provided username and password.
+   *
+   * @param body - An object containing the username and password of the new user.
+   * @returns A promise that resolves to an object with a success message.
+   */
   async registerUser(
     @Body() body: { username: string; password: string },
   ): Promise<{ message: string }> {
@@ -17,6 +27,16 @@ export class UsersController {
   }
 
   @Post('login')
+  /**
+   * Logs in a user by validating their username and password.
+   *
+   * @param body - An object containing the username and password of the user.
+   * @returns A promise that resolves to an object containing a success message and a token.
+   *
+   * @example
+   * loginUser({ username: 'testUser', password: 'testPassword' })
+   * // Returns: { message: 'Login successful', token: 'abc123' }
+   */
   async loginUser(
     @Body() body: { username: string; password: string },
   ): Promise<{ message: string; token: string }> {
@@ -27,6 +47,11 @@ export class UsersController {
 
   @Get('users')
   @UseGuards(AuthGuard)
+  /**
+   * Retrieves a list of all users.
+   *
+   * @returns A promise that resolves to an array of User objects.
+   */
   async getUsers(): Promise<User[]> {
     return this.usersService.getUsers();
   }
