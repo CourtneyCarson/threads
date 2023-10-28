@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from './guards/auth.guard';
 import { User } from './schemas/user.schema';
-import { UsersService } from './users.service';
+import { AuthResponse, RegisterResponse, UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
@@ -9,20 +9,25 @@ export class UsersController {
 
   @Post('register')
   async registerUser(
-    @Body() body: { username: string; password: string },
-  ): Promise<{ message: string }> {
-    const { username, password } = body;
-    await this.usersService.registerUser(username, password);
-    return { message: 'User registered successfully' };
+    @Body() body: { name: string; username: string; password: string },
+  ): Promise<RegisterResponse> {
+    const { name, username, password } = body;
+    const response = await this.usersService.registerUser(
+      name,
+      username,
+      password,
+    );
+    return response;
   }
 
   @Post('login')
   async loginUser(
     @Body() body: { username: string; password: string },
-  ): Promise<{ message: string; token: string }> {
+  ): Promise<AuthResponse> {
     const { username, password } = body;
-    const token = await this.usersService.loginUser(username, password);
-    return { message: 'Login successful', token };
+    // const token = await this.usersService.loginUser(username, password);
+    const authResponse = await this.usersService.loginUser(username, password);
+    return authResponse;
   }
 
   @Get('users')
@@ -31,11 +36,7 @@ export class UsersController {
     return this.usersService.getUsers();
   }
 
-  // @Post()
-  // create(@Body() createUserDto: CreateUserDto) {
-  //   return this.usersService.create(createUserDto);
-  // }
-
+  // future feat:
   // @Get()
   // findAll() {
   //   return this.usersService.findAll();

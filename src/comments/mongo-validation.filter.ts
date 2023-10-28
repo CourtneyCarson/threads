@@ -1,5 +1,4 @@
 import { ArgumentsHost, Catch, RpcExceptionFilter } from '@nestjs/common';
-// import { ValidationError } from "class-validator";
 import { Error } from 'mongoose';
 import ValidationError = Error;
 

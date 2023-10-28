@@ -9,9 +9,20 @@ import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
 import { User } from './schemas/user.schema';
+
+export interface RegisterResponse {
+  message: string;
+  user: User;
+}
+
+export interface AuthResponse {
+  user?: User;
+  token: string;
+  message: string;
+}
+
 @Injectable()
 export class UsersService {
-  // constructor(@InjectModel(User.name) private userModel: Model<User>) {}
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
     private jwtService: JwtService,
@@ -20,19 +31,27 @@ export class UsersService {
   private readonly logger = new Logger(UsersService.name);
 
   async registerUser(
+    name: string,
     username: string,
     password: string,
-  ): Promise<{ message: string }> {
+  ): Promise<RegisterResponse> {
     try {
       const hash = await bcrypt.hash(password, 10);
-      await this.userModel.create({ username, password: hash });
-      return { message: 'User registered successfully' };
+      const newUser = new this.userModel({ name, username, password: hash });
+      const user = await newUser.save();
+
+      const response: RegisterResponse = {
+        message: 'User registered successfully',
+        user,
+      };
+
+      return response;
     } catch (error) {
       throw new Error('An error occurred while registering the user');
     }
   }
 
-  async loginUser(username: string, password: string): Promise<string> {
+  async loginUser(username: string, password: string): Promise<AuthResponse> {
     try {
       const user = await this.userModel.findOne({ username });
       if (!user) {
@@ -44,7 +63,15 @@ export class UsersService {
       }
       const payload = { userId: user._id };
       const token = this.jwtService.sign(payload);
-      return token;
+
+      const authResponse: AuthResponse = {
+        user,
+
+        token,
+        message: 'User logged in successfully',
+      };
+
+      return authResponse;
     } catch (error) {
       console.log(error);
       throw new UnauthorizedException('An error occurred while logging in');
@@ -62,29 +89,4 @@ export class UsersService {
       throw new Error('An error occurred while retrieving users');
     }
   }
-
-  // create a new user, aka sign up
-  // create(createUserDto: CreateUserDto) {
-  //   const userToSave = new this.userModel(createUserDto);
-  //   return userToSave.save();
-  // }
-
-  // // return an array of users
-  // findAll() {
-  //   return this.userModel.find().exec();
-  // }
-
-  // findOne(id: number) {
-  //   return this.userModel.findById(id).exec();
-  //   // return `This action returns a #${id} user`;
-  // }
-
-  // update(id: number, updateUserDto: UpdateUserDto) {
-  //   this.userModel.updateOne({ _id: id }, updateUserDto).exec();
-  //   return `This action updates a #${id} user`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} user`;
-  // }
 }
