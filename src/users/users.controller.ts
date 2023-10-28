@@ -7,15 +7,6 @@ import { AuthResponse, RegisterResponse, UsersService } from './users.service';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  // @Post('register')
-  // async registerUser(
-  //   @Body() body: { name: string; username: string; password: string },
-  // ): Promise<{ message: string }> {
-  //   const { name, username, password } = body;
-  //   await this.usersService.registerUser(name, username, password);
-  //   return { message: 'User registered successfully' };
-  // }
-
   @Post('register')
   async registerUser(
     @Body() body: { name: string; username: string; password: string },
@@ -45,11 +36,7 @@ export class UsersController {
     return this.usersService.getUsers();
   }
 
-  // @Post()
-  // create(@Body() createUserDto: CreateUserDto) {
-  //   return this.usersService.create(createUserDto);
-  // }
-
+  // future feat:
   // @Get()
   // findAll() {
   //   return this.usersService.findAll();

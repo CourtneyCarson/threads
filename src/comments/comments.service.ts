@@ -19,7 +19,6 @@ export class CommentsService {
     });
     return createdComment.then((doc) => {
       // returns back the comment with the user and parent entire object, not just id
-      console.log('doc pop', doc.populate(['user', 'parent']));
       return doc.populate(['user', 'parent']);
     });
   }
