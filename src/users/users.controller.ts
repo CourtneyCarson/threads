@@ -9,20 +9,24 @@ export class UsersController {
 
   @Post('register')
   async registerUser(
-    @Body() body: { username: string; password: string },
+    @Body() body: { name: string; username: string; password: string },
   ): Promise<{ message: string }> {
-    const { username, password } = body;
-    await this.usersService.registerUser(username, password);
+    const { name, username, password } = body;
+    await this.usersService.registerUser(name, username, password);
     return { message: 'User registered successfully' };
   }
 
   @Post('login')
   async loginUser(
     @Body() body: { username: string; password: string },
-  ): Promise<{ message: string; token: string }> {
+  ): Promise<{ message: string; token: string; user: User }> {
     const { username, password } = body;
-    const token = await this.usersService.loginUser(username, password);
-    return { message: 'Login successful', token };
+    // const token = await this.usersService.loginUser(username, password);
+    const { message, token, user } = await this.usersService.loginUser(
+      username,
+      password,
+    );
+    return { message, token, user };
   }
 
   @Get('users')

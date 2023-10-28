@@ -9,6 +9,13 @@ import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
 import { User } from './schemas/user.schema';
+
+interface AuthResponse {
+  user: User; // User type should match your User model or entity
+  token: string;
+  message: string;
+}
+
 @Injectable()
 export class UsersService {
   // constructor(@InjectModel(User.name) private userModel: Model<User>) {}
@@ -19,20 +26,56 @@ export class UsersService {
 
   private readonly logger = new Logger(UsersService.name);
 
+  // async registerUser(
+  //   name: string,
+  //   username: string,
+  //   password: string,
+  // ): Promise<{ message: string }> {
+  //   try {
+  //     const hash = await bcrypt.hash(password, 10);
+  //     await this.userModel.create({ username, password: hash });
+  //     return { message: 'User registered successfully' };
+  //   } catch (error) {
+  //     throw new Error('An error occurred while registering the user');
+  //   }
+  // }
+
   async registerUser(
+    name: string,
     username: string,
     password: string,
-  ): Promise<{ message: string }> {
+  ): Promise<User> {
     try {
       const hash = await bcrypt.hash(password, 10);
-      await this.userModel.create({ username, password: hash });
-      return { message: 'User registered successfully' };
+      const newUser = new this.userModel({ name, username, password: hash });
+      const user = await newUser.save();
+      console.log('user', user);
+      return user;
     } catch (error) {
       throw new Error('An error occurred while registering the user');
     }
   }
 
-  async loginUser(username: string, password: string): Promise<string> {
+  // async loginUser(username: string, password: string): Promise<string> {
+  //   try {
+  //     const user = await this.userModel.findOne({ username });
+  //     if (!user) {
+  //       throw new NotFoundException('User not found');
+  //     }
+  //     const passwordMatch = await bcrypt.compare(password, user.password);
+  //     if (!passwordMatch) {
+  //       throw new UnauthorizedException('Invalid login credentials');
+  //     }
+  //     const payload = { userId: user._id };
+  //     const token = this.jwtService.sign(payload);
+  //     return token;
+  //   } catch (error) {
+  //     console.log(error);
+  //     throw new UnauthorizedException('An error occurred while logging in');
+  //   }
+  // }
+
+  async loginUser(username: string, password: string): Promise<AuthResponse> {
     try {
       const user = await this.userModel.findOne({ username });
       if (!user) {
@@ -44,7 +87,16 @@ export class UsersService {
       }
       const payload = { userId: user._id };
       const token = this.jwtService.sign(payload);
-      return token;
+
+      const authResponse: AuthResponse = {
+        user,
+        token,
+        message: 'User logged in successfully',
+      };
+
+      console.log('authResponse', authResponse);
+
+      return authResponse;
     } catch (error) {
       console.log(error);
       throw new UnauthorizedException('An error occurred while logging in');
