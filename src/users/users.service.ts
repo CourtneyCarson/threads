@@ -10,10 +10,17 @@ import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
 import { User } from './schemas/user.schema';
 
-interface AuthResponse {
-  user: User; // User type should match your User model or entity
+export interface RegisterResponse {
+  message: string;
+  user: User; // Assuming User is your user model
+}
+
+export interface AuthResponse {
+  user?: User; // User type should match your User model or entity
   token: string;
   message: string;
+  // name: string;
+  // username: string;
 }
 
 @Injectable()
@@ -44,13 +51,18 @@ export class UsersService {
     name: string,
     username: string,
     password: string,
-  ): Promise<User> {
+  ): Promise<RegisterResponse> {
     try {
       const hash = await bcrypt.hash(password, 10);
       const newUser = new this.userModel({ name, username, password: hash });
       const user = await newUser.save();
-      console.log('user', user);
-      return user;
+      // console.log('user', user);
+      const response: RegisterResponse = {
+        message: 'User registered successfully',
+        user,
+      };
+
+      return response;
     } catch (error) {
       throw new Error('An error occurred while registering the user');
     }
@@ -90,11 +102,13 @@ export class UsersService {
 
       const authResponse: AuthResponse = {
         user,
+        // name: user.name,
+        // username: user.username,
         token,
         message: 'User logged in successfully',
       };
 
-      console.log('authResponse', authResponse);
+      // console.log('authResponse', authResponse);
 
       return authResponse;
     } catch (error) {

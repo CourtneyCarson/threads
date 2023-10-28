@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateCommentDto } from './dto/create-comment.dto';
-import { UpdateCommentDto } from './dto/update-comment.dto';
 import { Comment } from './schemas/comment.schema';
+import { UpdateCommentDto } from './dto/update-comment.dto';
 
 @Injectable()
 export class CommentsService {
@@ -19,6 +19,7 @@ export class CommentsService {
     });
     return createdComment.then((doc) => {
       // returns back the comment with the user and parent entire object, not just id
+      console.log('doc pop', doc.populate(['user', 'parent']));
       return doc.populate(['user', 'parent']);
     });
   }
@@ -53,6 +54,7 @@ export class CommentsService {
     return `This action returns a #${id} comment`;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   update(id: number, updateCommentDto: UpdateCommentDto) {
     return `This action updates a #${id} comment`;
   }
